@@ -2,22 +2,30 @@
 
 NovaLauncher is a personal Android launcher project for Minecraft: Java Edition.
 
-## Status
+## Current status
 
-The repository is being set up. The first workflow is a **bootstrap build only**: it builds the upstream ZalithLauncher2 source for arm64 so we can verify the build pipeline. This is not yet a NovaLauncher-branded release and should not be presented as one.
+The repository currently contains a **bootstrap CI workflow**, not a finished launcher fork. The workflow checks out a pinned ZalithLauncher2 revision, builds an arm64 debug APK, and uploads it as a GitHub Actions artifact. It intentionally does not rename the upstream app or claim to be a NovaLauncher release.
 
-## Build a bootstrap APK
+## Build
 
-1. Open the **Actions** tab.
-2. Select **Bootstrap Android APK**.
-3. Press **Run workflow**.
-4. When it finishes, open the run and download the `upstream-bootstrap-arm64-debug` artifact.
+A push to `main` starts the **Bootstrap Android APK** workflow automatically. You can also open the **Actions** tab, select the workflow, and press **Run workflow**.
 
-The APK is built from the upstream project at https://github.com/ZalithLauncher/ZalithLauncher2. The upstream project is licensed under GPL-3.0 and includes additional branding requirements for modified redistributions. Before distributing a modified app, we must use a distinct name, clearly label it as an unofficial modified version on the startup or main screen, and preserve copyright notices.
+When the run succeeds:
+1. Open the completed workflow run.
+2. Scroll to **Artifacts**.
+3. Download `upstream-bootstrap-arm64-debug`.
+
+The APK is a debug build and may install alongside other builds because the upstream project adds a debug application ID suffix.
+
+## Upstream source and license
+
+Source: https://github.com/ZalithLauncher/ZalithLauncher2  
+Pinned revision: `7d4f31af01d8a0f6b86e6cc59ff846c24d7bb579`
+
+The upstream project is licensed under GPL-3.0 and includes additional branding requirements for modified redistributions. Before distributing a modified app, we must use a distinct name, clearly label it as an unofficial modified version on the startup or main screen, and preserve copyright notices.
 
 ## Planned work
 
-- Verify the Android arm64 build in GitHub Actions.
-- Create the NovaLauncher branding and apply the upstream license requirements.
-- Add and test launcher features in small, reviewable changes.
-- Build and test the NovaLauncher APK.
+See [NOVALAUNCHER_SPEC.md](NOVALAUNCHER_SPEC.md) and [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md).
+
+The next critical step is to bring the upstream source into this repository so code changes, NovaLauncher branding, loader support, and Modrinth integration can be implemented and reviewed here. Until then, the CI artifact is only an upstream bootstrap build.

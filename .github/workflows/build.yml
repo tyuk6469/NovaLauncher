@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: bootstrap-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,11 +19,12 @@ jobs:
       - name: Checkout NovaLauncher repository
         uses: actions/checkout@v4
 
-      - name: Checkout upstream source
+      - name: Checkout pinned upstream source
         uses: actions/checkout@v4
         with:
           repository: ZalithLauncher/ZalithLauncher2
-          ref: main
+          # Keep this revision pinned so the bootstrap build is reproducible.
+          ref: 7d4f31af01d8a0f6b86e6cc59ff846c24d7bb579
           path: source
           submodules: recursive
 

@@ -6,7 +6,7 @@ NovaLauncher is a personal Android launcher project for Minecraft: Java Edition,
 
 The repository now tracks the upstream ZalithLauncher2 source as a Git submodule at `upstream/ZalithLauncher2`. The submodule is pinned to a specific commit so builds are reproducible and upstream updates are deliberate rather than automatic.
 
-The current CI workflow builds an **upstream arm64 debug APK** from that pinned source. It is not yet a NovaLauncher-branded release, and the planned NovaLauncher features are not implemented yet.
+The current CI workflow builds an **arm64 debug bootstrap APK** from that pinned source and sets the app label and build metadata to NovaLauncher. This is only an initial branded build: the main-screen unofficial-modification notice, custom home screen, and planned NovaLauncher features are not implemented yet.
 
 ## Build
 
@@ -15,7 +15,7 @@ A push to `main` starts the **Bootstrap Android APK** workflow automatically. Yo
 When the run succeeds:
 1. Open the completed workflow run.
 2. Scroll to **Artifacts**.
-3. Download `upstream-bootstrap-arm64-debug`.
+3. Download `NovaLauncher-arm64-debug-bootstrap`.
 
 The APK is a debug build and may install alongside other builds because the upstream project adds a debug application ID suffix.
 
@@ -29,7 +29,7 @@ The upstream project is licensed under GPL-3.0 and includes additional branding 
 
 ## Development priorities
 
-1. Confirm the pinned source builds reliably on CI.
+1. Confirm the NovaLauncher-labelled arm64 debug bootstrap builds reliably on CI.
 2. Inspect the launcher architecture and identify safe integration points.
 3. Implement NovaLauncher branding and the home screen.
 4. Add loader installation and instance management improvements.

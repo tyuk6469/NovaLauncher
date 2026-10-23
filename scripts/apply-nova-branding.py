@@ -15,17 +15,18 @@ if text.count(anchor) != 1:
     raise SystemExit("Expected exactly one main-screen insertion point; refusing to patch unknown upstream source.")
 
 imports_anchor = "import androidx.activity.compose.setContent\n"
-imports = """import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-"""
+imports = [
+    "import androidx.compose.material3.AlertDialog",
+    "import androidx.compose.material3.Text",
+    "import androidx.compose.material3.TextButton",
+    "import androidx.compose.runtime.mutableStateOf",
+    "import androidx.compose.runtime.remember",
+    "import androidx.compose.runtime.setValue",
+]
 if text.count(imports_anchor) != 1:
     raise SystemExit("Could not locate Compose imports safely.")
-text = text.replace(imports_anchor, imports_anchor + imports, 1)
+missing_imports = [item for item in imports if item + "\\n" not in text]
+text = text.replace(imports_anchor, imports_anchor + "".join(item + "\\n" for item in missing_imports), 1)
 
 notice = '''                // NOVALAUNCHER_UNOFFICIAL_NOTICE
                 var showUnofficialNotice by remember { mutableStateOf(true) }

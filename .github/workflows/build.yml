@@ -46,11 +46,28 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --version
-          ./gradlew projects
+          ./gradlew projects \\
+            -Plauncher_app_name="NovaLauncher" \\
+            -Plauncher_name="NovaLauncher" \\
+            -Plauncher_short_name="NOVA" \\
+            -Purl_home="https://github.com/tyuk6469/NovaLauncher" \\
+            -Plauncher_version_code="1" \\
+            -Plauncher_version_name="0.1.0" \\
+            -Pdefault_store_password="NovaDebugOnly2026" \\
+            -Pdefault_key_password="NovaDebugOnly2026"
 
       - name: Build arm64 debug APK
         working-directory: upstream/ZalithLauncher2
-        run: ./gradlew ZalithLauncher:assembleDebug -Darch=arm64 --stacktrace
+        run: |
+          ./gradlew ZalithLauncher:assembleDebug -Darch=arm64 --stacktrace \\
+            -Plauncher_app_name="NovaLauncher" \\
+            -Plauncher_name="NovaLauncher" \\
+            -Plauncher_short_name="NOVA" \\
+            -Purl_home="https://github.com/tyuk6469/NovaLauncher" \\
+            -Plauncher_version_code="1" \\
+            -Plauncher_version_name="0.1.0" \\
+            -Pdefault_store_password="NovaDebugOnly2026" \\
+            -Pdefault_key_password="NovaDebugOnly2026"
 
       - name: Verify APK output
         run: |
@@ -63,7 +80,7 @@ jobs:
       - name: Upload bootstrap APK
         uses: actions/upload-artifact@v4
         with:
-          name: upstream-bootstrap-arm64-debug
+          name: NovaLauncher-arm64-debug-bootstrap
           path: upstream/ZalithLauncher2/ZalithLauncher/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30

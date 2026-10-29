@@ -56,8 +56,6 @@ jobs:
             -Purl_home="https://github.com/tyuk6469/NovaLauncher" \
             -Plauncher_version_code="1" \
             -Plauncher_version_name="0.1.0" \
-            -Pdefault_store_password="NovaDebugOnly2026" \
-            -Pdefault_key_password="NovaDebugOnly2026"
 
       - name: Build arm64 debug APK
         working-directory: upstream/ZalithLauncher2
@@ -69,8 +67,6 @@ jobs:
             -Purl_home="https://github.com/tyuk6469/NovaLauncher" \
             -Plauncher_version_code="1" \
             -Plauncher_version_name="0.1.0" \
-            -Pdefault_store_password="NovaDebugOnly2026" \
-            -Pdefault_key_password="NovaDebugOnly2026"
 
       - name: Verify APK output
         run: |

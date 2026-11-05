@@ -1,20 +1,44 @@
 # NovaLauncher product specification
 
 ## Goal
-Create an Android launcher for Minecraft: Java Edition, using ZalithLauncher2 as the technical base while keeping NovaLauncher branding and respecting the upstream GPL-3.0 license and branding conditions.
+Create a full Android launcher for Minecraft: Java Edition, using ZalithLauncher2 as the technical base while keeping NovaLauncher branding and respecting the upstream GPL-3.0 license and branding conditions.
 
-## Target
+## Target platform and Minecraft versions
 - Android phones, first target arm64.
-- Build and test debug APKs through GitHub Actions.
-- Do not call an upstream bootstrap APK a NovaLauncher release.
+- Support Minecraft Java Edition versions from **1.20.1 through the latest available release**, with 26.3 included when it is an officially available Java Edition version and the required runtime/loader components support it.
+- Fetch version metadata dynamically from official Minecraft manifests rather than hard-coding a short list.
+- Include stable releases by default; make snapshots/experiments an optional advanced setting.
+- Never claim a version or loader combination works until its game files, libraries, Java runtime requirements, and launch path have been validated.
 
-## Requested capabilities
-1. Minecraft Java version management and launch.
-2. Mod loader support: Fabric, Forge, and NeoForge, limited to versions actually supported by the selected Minecraft version.
-3. Modrinth browsing/download integration where API and project compatibility permit.
-4. Performance-oriented settings, with clear descriptions and safe defaults.
-5. An optional Optimization Pack that downloads a curated set of compatible performance mods in the background, hides only pack-managed mods from the normal mod list, and provides a separate status/disable/remove screen.
-6. Mobile-friendly interface and useful install/build diagnostics.
+## Mod loaders
+- Fabric, Forge, and NeoForge are required.
+- Quilt is a desirable additional loader.
+- Show only loader versions that actually exist for the selected Minecraft version.
+- Install the correct loader profile and dependencies automatically, and allow separate game instances/profiles per Minecraft version and loader.
+- Do not imply every loader supports every Minecraft release; availability depends on upstream releases.
+
+## In-launcher mod browser and manager
+The user must be able to discover, download, install, update, disable, and remove mods without leaving NovaLauncher.
+
+### Sources
+- Modrinth integration is required.
+- CurseForge integration should be added if its official API and licensing/authorization requirements permit it.
+- Support direct local JAR import as a fallback for mods obtained elsewhere.
+- Clearly identify the source of each download. Do not scrape websites or bypass provider access controls.
+
+### User experience
+- Search by name and browse categories, popular/recent projects, and relevant filters.
+- Filter by Minecraft version, loader, client/server/both environment, and project type.
+- Show project description, author, version, dependencies, supported game versions/loaders, and source link before installation.
+- Install into the currently selected instance/profile, not a global shared mods folder.
+- Resolve required dependencies automatically where the provider metadata allows it.
+- Warn about optional dependencies, incompatible versions, duplicate/conflicting mods, and server-only mods.
+- Provide progress, pause/cancel where supported, retry, update-all, and per-mod enable/disable/remove controls.
+- Keep manually installed mods visible and untouched. Never silently replace or delete a user's files.
+- Verify provider-supplied hashes when available and use safe temporary downloads followed by atomic installation.
+
+## Mod compatibility promise
+"Support all mods" cannot be guaranteed: mods may be abandoned, version-locked, loader-specific, incompatible with one another, require server-side installation, or depend on native libraries/features unavailable on Android. NovaLauncher must aim for broad catalogue coverage and accurate compatibility filtering, not claim universal compatibility. The game client must preserve normal Java/Fabric/Forge/NeoForge mod loading; launcher discovery/download support does not itself make an incompatible mod work.
 
 ## Performance and multiplayer requirements
 - Multiplayer compatibility is a hard requirement, not an optional bonus.
@@ -24,18 +48,19 @@ Create an Android launcher for Minecraft: Java Edition, using ZalithLauncher2 as
 - Keep experimental engine/threading changes disabled by default and easy to roll back.
 - Reject any optimization that causes disconnects, desynchronization, abnormal rubber-banding, world/save issues, or client-mod incompatibility, even if it improves FPS.
 - Test on a private disposable server before recommending public-server use.
-- Measure frame-time and 1% lows alongside average FPS; record network stability separately from local rendering performance.
+- Measure frame-time and 1% lows alongside average FPS; record network stability separately from local FPS.
 
 Detailed procedure: [docs/MULTITHREADING_EXPERIMENT.md](docs/MULTITHREADING_EXPERIMENT.md).
 
 ## Optimization Pack requirements
-- Start with Fabric and a curated allowlist rather than downloading every mod.
+- Start with a curated allowlist of client-side performance mods rather than downloading every mod.
 - Resolve Minecraft version, loader, dependencies, environment-side and compatibility metadata before downloading.
 - Prefer trusted official project APIs and verify supplied hashes.
 - Keep mod downloads optional, visible as a feature, and easy to disable or remove.
 - Never hide manually installed mods or mods managed by other tools.
 - Keep pack-managed file metadata outside the mod JARs so the UI can filter them without modifying mods.
 - Never silently install an incompatible set. Report skipped mods and errors.
+- Never auto-install server-side mods into a client profile.
 
 Implementation details and acceptance checks: [docs/hidden-optimization-mods.md](docs/hidden-optimization-mods.md).
 
@@ -51,9 +76,13 @@ Implementation details and acceptance checks: [docs/hidden-optimization-mods.md]
 - [x] Add a CI bootstrap build workflow.
 - [x] Pin the upstream revision used by the bootstrap workflow.
 - [x] Document the background Optimization Pack behavior and safety requirements.
-- [ ] Confirm a successful arm64 build and inspect the artifact.
+- [ ] Confirm successful arm64 build and inspect the artifact.
 - [ ] Import/fork the source into this repository so NovaLauncher changes are versioned here.
 - [ ] Apply distinct branding and the required unofficial-modification notice.
-- [ ] Add or verify loader and Modrinth workflows.
-- [ ] Implement the Optimization Pack, starting with Fabric.
-- [ ] Test installation, single-player, multiplayer, and existing instances on a real Android device.
+- [ ] Audit existing ZalithLauncher2 version management, loader installation, and in-launcher mod-management code before reimplementing features.
+- [ ] Build version/loader compatibility matrix from live official metadata.
+- [ ] Implement in-launcher Modrinth search and install for selected instances.
+- [ ] Add CurseForge support if official API access and terms permit.
+- [ ] Add safe local JAR import and dependency/conflict handling.
+- [ ] Implement the Optimization Pack, starting with client-side Fabric mods.
+- [ ] Test version range, each loader, mod installation, single-player, multiplayer, and existing instances on a real Android device.

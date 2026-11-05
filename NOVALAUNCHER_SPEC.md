@@ -16,6 +16,18 @@ Create an Android launcher for Minecraft: Java Edition, using ZalithLauncher2 as
 5. An optional Optimization Pack that downloads a curated set of compatible performance mods in the background, hides only pack-managed mods from the normal mod list, and provides a separate status/disable/remove screen.
 6. Mobile-friendly interface and useful install/build diagnostics.
 
+## Performance and multiplayer requirements
+- Multiplayer compatibility is a hard requirement, not an optional bonus.
+- Prefer client-side optimizations that do not change server-visible gameplay, packet contents/order, or protocol behavior.
+- Never require server-side plugins or mods for a general client performance feature unless it is clearly labeled as server-dependent.
+- Do not move authoritative world ticks, entity/block updates, inventory state, or other shared game-state mutation onto arbitrary worker threads.
+- Keep experimental engine/threading changes disabled by default and easy to roll back.
+- Reject any optimization that causes disconnects, desynchronization, abnormal rubber-banding, world/save issues, or client-mod incompatibility, even if it improves FPS.
+- Test on a private disposable server before recommending public-server use.
+- Measure frame-time and 1% lows alongside average FPS; record network stability separately from local rendering performance.
+
+Detailed procedure: [docs/MULTITHREADING_EXPERIMENT.md](docs/MULTITHREADING_EXPERIMENT.md).
+
 ## Optimization Pack requirements
 - Start with Fabric and a curated allowlist rather than downloading every mod.
 - Resolve Minecraft version, loader, dependencies, environment-side and compatibility metadata before downloading.
@@ -44,4 +56,4 @@ Implementation details and acceptance checks: [docs/hidden-optimization-mods.md]
 - [ ] Apply distinct branding and the required unofficial-modification notice.
 - [ ] Add or verify loader and Modrinth workflows.
 - [ ] Implement the Optimization Pack, starting with Fabric.
-- [ ] Test on an Android device and publish a clearly labeled APK artifact.
+- [ ] Test installation, single-player, multiplayer, and existing instances on a real Android device.

@@ -2,30 +2,40 @@
 
 ## Milestones
 
-1. Verify the arm64 Android debug build in GitHub Actions.
-2. Bring the upstream launcher source into this repository as a pinned, reproducible source snapshot or submodule.
-3. Apply distinct NovaLauncher branding and the upstream GPL-3.0 additional branding terms before distributing a modified build.
-4. Add launcher-side features in small commits, validating each with a build.
-5. Test Fabric, Forge, and NeoForge installation paths and Modrinth integration before advertising support.
-6. Profile Minecraft on Android and investigate safe, measurable improvements to worker-thread usage without moving authoritative game-state updates off their owning thread.
+1. [x] Pin ZalithLauncher2 source and establish a reproducible arm64 debug CI build.
+2. [x] Add distinct NovaLauncher app metadata and an explicit unofficial-modification startup notice.
+3. [x] Audit the pinned upstream source for reusable Fabric, Forge, Modrinth, CurseForge, and installed-mod-management features.
+4. [ ] Trace the end-to-end flows from home screen through version creation, loader installation, mod discovery, and mod management.
+5. [ ] Verify current CurseForge API authorization and terms; keep it disabled if requirements cannot be met.
+6. [ ] Implement the Nova home screen using existing navigation and state rather than a disconnected mock screen.
+7. [ ] Add Nova-specific compatibility safeguards and local JAR import improvements only where the upstream implementation has gaps.
+8. [ ] Implement the optional Optimization Pack with a curated allowlist, per-instance ownership metadata, dependency checks, hashes, and rollback-safe downloads.
+9. [ ] Test supported Minecraft versions, Fabric and Forge, mod installation, single-player, multiplayer, and existing instances on a physical Android device.
 
-## Current limitation
+## Current implementation status
 
-The current app is a branded bootstrap based on a pinned ZalithLauncher2 submodule. It is not a rewritten Minecraft engine. Launcher-side changes alone cannot make Minecraft's game loop multithreaded.
+The app is currently a branded bootstrap based on the pinned ZalithLauncher2 submodule. The startup notice is injected by `scripts/apply-nova-branding.py` during CI. The main Nova home-screen redesign and Nova-specific Optimization Pack are not implemented yet.
 
-The successful CI run verifies that the arm64 debug APK can be built and uploaded. It does not verify installation or runtime behavior on a physical phone.
+The upstream source already includes substantial launcher functionality:
+- Fabric and Forge loader metadata and installation paths.
+- Modrinth and CurseForge search/API classes.
+- Mod search and installed-mod management screens.
+- Mod metadata readers and modpack import/export.
 
-## First technical priorities
+See [docs/upstream-feature-audit.md](docs/upstream-feature-audit.md). The audit confirms source files exist, not that every flow is bug-free or compatible with every Minecraft release. Reuse existing code where possible; avoid duplicate implementations.
 
-- Keep upstream copyright and license notices.
-- Use a unique application name and visible unofficial-modification label in any redistributed modified app.
-- Pin upstream revisions for reproducible builds.
-- Keep CI artifacts for each successful build and inspect build logs when failures occur.
-- Establish repeatable FPS, frame-time, per-core CPU, memory, and thermal baselines before performance changes.
-- Prefer supported configuration and existing asynchronous task boundaries before attempting engine-level patches.
-- Never parallelize world ticks or shared game-state mutation without a proven thread-safe design and extensive compatibility tests.
-- Keep experimental changes optional and easy to disable or revert.
+## Build and verification
 
-## Multithreading experiment
+The workflow builds an arm64 debug APK from a pinned upstream revision and uploads it as a GitHub Actions artifact. A successful CI build verifies compilation and artifact upload only. It does not prove installation, game launch, mod compatibility, or multiplayer stability on a physical device.
 
-The research-first procedure and safety gates are documented in [docs/MULTITHREADING_EXPERIMENT.md](docs/MULTITHREADING_EXPERIMENT.md). No Minecraft game-loop code has been changed yet.
+## Performance and multiplayer
+
+Profile before optimizing. Record average FPS, frame times/1% lows, per-core CPU use, memory, and thermals. Keep ordinary client-side optimizations separate from experimental engine/threading changes.
+
+Never parallelize world ticks or shared game-state mutation without a proven thread-safe design and extensive compatibility tests. Preserve normal network protocol behavior and test on a private disposable server before recommending public-server use.
+
+Detailed procedure: [docs/MULTITHREADING_EXPERIMENT.md](docs/MULTITHREADING_EXPERIMENT.md).
+
+## AI collaboration
+
+ChatGPT, Claude, Copilot, and other agents may work in parallel only on separate branches and non-overlapping tasks. Follow [docs/AI_COLLABORATION.md](docs/AI_COLLABORATION.md). The repository specification and actual source code are the source of truth.
